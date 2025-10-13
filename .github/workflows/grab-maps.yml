@@ -1,0 +1,44 @@
+name: Grab JS & SourceMaps
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  grab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install deps
+        run: |
+          npm i
+          npx playwright install --with-deps
+
+      - name: Grab assets
+        env:
+          BASE_URL: ${{ secrets.E2E_BASE_URL }}
+          LOGIN_URL: ${{ secrets.E2E_LOGIN_URL }}
+          USERNAME: ${{ secrets.E2E_USERNAME }}
+          PASSWORD: ${{ secrets.E2E_PASSWORD }}
+          ASSET_PATTERNS: "\\.js($|\\?)|\\.map($|\\?)|vite-.*\\.js|login\\.js"
+          EXTRA_PATHS: "/,/dashboard,https://staging-zt.lab.linksafe.vn/dashboard,https://staging-zt.lab.linksafe.vn/assets"
+        run: node grab-maps.js
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-assets-and-maps
+          path: _artifacts/assets
+          retention-days: 14

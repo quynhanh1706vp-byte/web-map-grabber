@@ -1,0 +1,12 @@
+{
+  "name": "web-map-grabber",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "grab": "node grab-maps.js"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.47.2"
+  }
+}
