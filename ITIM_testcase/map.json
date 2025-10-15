@@ -1,0 +1,62 @@
+{
+  "tests": [
+    {
+      "id": "ITIM-NAV-001",
+      "title": "Global Navigation to core modules",
+      "tags": ["smoke","nav","p1"],
+      "preconditions": ["login-local-ok"],
+      "steps": [
+        {"action":"goto","url":"{{BASE_URL}}/"},
+        {"action":"click","locator":"[data-testid='nav-dashboard']"},
+        {"action":"expect-url-contains","value":"/dashboard"},
+        {"action":"click","locator":"[data-testid='nav-assets']"},
+        {"action":"expect-url-contains","value":"/assets"},
+        {"action":"click","locator":"[data-testid='nav-packages']"},
+        {"action":"expect-url-contains","value":"/packages"}
+      ],
+      "expected": [
+        "URL đổi đúng theo từng module",
+        "Breadcrumb hiển thị đúng"
+      ]
+    },
+    {
+      "id": "ITIM-AS-NEW-001",
+      "title": "Create minimal Asset",
+      "tags": ["asset","create","p1"],
+      "preconditions": ["login-local-ok"],
+      "data": {
+        "AS_NAME_MIN": "auto-asset-{{RANDOM}}"
+      },
+      "steps": [
+        {"action":"goto","url":"{{BASE_URL}}/assets"},
+        {"action":"click","locator":"[data-testid='btn-new-asset']"},
+        {"action":"fill","locator":"form[name='asset'] input[name='name']","value":"{{AS_NAME_MIN}}"},
+        {"action":"click","locator":"[data-testid='btn-save-asset']"},
+        {"action":"expect-visible","locator":".toast-success"}
+      ],
+      "expected": [
+        "Tạo asset thành công, có trong danh sách"
+      ]
+    },
+    {
+      "id": "ITIM-AS-SRCH-ADV-001",
+      "title": "Assets advanced filter returns exact rows",
+      "tags": ["asset","filter","p1"],
+      "preconditions": ["login-local-ok","at-least-1-asset"],
+      "data": {
+        "FILTER_NAME":"auto-asset"
+      },
+      "steps":[
+        {"action":"goto","url":"{{BASE_URL}}/assets"},
+        {"action":"click","locator":"[data-testid='btn-advanced-filter']"},
+        {"action":"fill","locator":"input[name='name-contains']","value":"{{FILTER_NAME}}"},
+        {"action":"click","locator":"[data-testid='btn-apply-filter']"},
+        {"action":"expect-visible","locator":"table[data-testid='asset-table']"},
+        {"action":"expect-has-text","locator":"table[data-testid='asset-table']", "value":"{{FILTER_NAME}}"}
+      ],
+      "expected":[
+        "Bảng kết quả chỉ hiển thị asset khớp tiêu chí"
+      ]
+    }
+  ]
+}
